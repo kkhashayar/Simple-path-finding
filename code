@@ -1,0 +1,211 @@
+'''basic path finding-targeting'''
+
+import turtle, time , random, math
+
+distance = 10
+width = 54
+height = 54
+
+screen = turtle.Screen()
+screen.setup(600,600,700)
+screen.bgcolor("black")
+screen.tracer(0)
+place = 0
+#######################################
+''' Creating the our map'''
+class Pen(turtle.Turtle):
+    def __init__(self):
+        turtle.Turtle.__init__(self)
+        self.penup()
+        self.pencolor("blue")
+        self.shape("square")
+        self.shapesize(0.5)
+        self.fillcolor("black")
+        self.speed(0)
+        self.setpos(-280, 280)
+    
+pen = Pen()
+line = 0
+positions = []
+for i in range(height):
+    for i in range(width):
+        pen.stamp()
+        positions.append(pen.pos())
+        pen.forward(distance)
+    pen.back(distance * width)
+    pen.right(90)
+    pen.forward(distance)
+    pen.left(90)
+    line += 1
+    print("Line", line)
+#############################################
+'''Creating the Classes - in methods we  use  map and distances to mark
+the target and move only inside the map'''
+
+import turtle, time , random, math
+from grid_maker import *
+
+
+class Cell (turtle.Turtle):
+    def __init__(self):
+        turtle.Turtle.__init__(self)
+        self.penup()
+        self.pencolor("orange")
+        self.shape("circle")
+        self.shapesize(0.5)
+        self.fillcolor("orange")
+        self.speed(0)
+        self.speed = distance
+        self.setheading(0)
+        self.setpos(random.choice(positions))
+        self.direction = random.choice(["up","down","right","left"])
+        self.force_direction = "stop"
+
+    def is_close(self, other):
+        a = self.xcor() - other.xcor()
+        b = self.ycor() - other.ycor()
+        distance = math.sqrt((a**2)+(b**2))
+        if distance < 150 :
+            return True
+        else:
+            return False
+    
+    def update(self):
+        self.direction = random.choice(["up","down","right","left"])
+        nx = 0
+        ny = 0
+        if self.direction is "right":
+            nx = self.xcor() + distance
+            ny = self.ycor()
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction
+
+        if self.direction is "left":
+            nx = self.xcor() - distance
+            ny = self.ycor()
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction
+
+        if self.direction is "up":
+            nx = self.xcor()
+            ny = self.ycor() + distance
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction
+
+        if self.direction is "down":
+            nx = self.xcor()
+            ny = self.ycor() - distance
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction = random.choice(["up","down","right","left"])
+            
+class Food(turtle.Turtle):
+    def __init__(self):
+        turtle.Turtle.__init__(self)
+        self.penup()
+        self.pencolor("red")
+        self.shape("square")
+        self.shapesize(0.5)
+        self.fillcolor("green")
+        self.speed(0)
+        self.speed = distance
+        self.setheading(0)
+        self.setpos(random.choice(positions))
+
+    def is_close_close(self, other):
+        a = self.xcor() - other.xcor()
+        b = self.ycor() - other.ycor()
+        distance = math.sqrt((a**2)+(b**2))
+        if distance < 200 :
+            return True
+        else:
+            return False
+
+    def update(self):
+        self.direction = random.choice(["up","down","right","left"])
+        nx = 0
+        ny = 0
+        if self.direction is "right":
+            nx = self.xcor() + (distance*2)
+            ny = self.ycor()
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction
+
+        if self.direction is "left":
+            nx = self.xcor() - (distance*2)
+            ny = self.ycor()
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction
+
+        if self.direction is "up":
+            nx = self.xcor()
+            ny = self.ycor() + (distance*2)
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction
+
+        if self.direction is "down":
+            nx = self.xcor()
+            ny = self.ycor() - (distance*2)
+            if (nx,ny) in positions:
+                self.goto(nx,ny)
+            else:
+                self.direction = random.choice(["up","down","right","left"])
+
+############################################
+'''Main function contains the main loop '''
+'''the better way is to separate this code to 3 different Parts'''
+cells = []
+food = Food()
+
+for cell in range(5):
+    cells.append(Cell())
+
+def main():
+    running = True
+    while running:
+        screen.update()
+        food.update()
+        for cell in cells:
+            if cell.is_close(food):
+                if cell.xcor() < food.xcor():
+                    cell.goto(cell.xcor() + distance, cell.ycor())
+                if cell.xcor() > food.xcor():
+                    cell.goto(cell.xcor() - distance, cell.ycor())
+                if cell.ycor() > food.ycor():
+                    cell.goto(cell.xcor(), cell.ycor() - distance)
+                if cell.ycor() < food.ycor():
+                    cell.goto(cell.xcor() , cell.ycor() + distance)
+                    
+            else:
+                screen.update()
+                cell.update()
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
